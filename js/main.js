@@ -226,19 +226,6 @@ function Logout(){
 }
 
 
-function Editar(){
-  var data = firebase.database().ref('Usuarios');
-
-  data.once("value").then(function(snapshot) {
-    snapshot.forEach(function (childSnapshot) {
-      edit = childSnapshot.val();
-      console.log(edit);
-      firebase.database('Usuarios/' +uid).then(function(){
-
-      });
-    });
-  });
-}
 
 /* Crear articulos */
 /* Imagen base:64 */ 
@@ -247,21 +234,22 @@ function foto() {
     $('#file_photo').change(function (e) {
       e.preventDefault();
       var foto = document.getElementById('file_photo').files[0];
-      console.log(foto);
       let fileReader = new FileReader();
       fileReader.addEventListener('load', function (evt) {
       console.log(fileReader.result);
       var  foto_producto = fileReader.result;
-      $('#show-img').attr('src', fileReader.result);
-
+      $('#show-img').attr('src', foto_producto);
       });
       fileReader.readAsDataURL(foto);
     });
   });
 } foto()
 function nuevoArticulo(){
-  
-    var photo = foto_producto;
+  var fotito =  $('#show-img').attr('src');
+
+  var value_photo = $('#file_photo').val();
+    console.log(value_photo)
+    var photo = fotito;
     var title = $('#title').val();
     var description = $('#description').val();
     var category = $('#category').val();
@@ -276,8 +264,34 @@ function nuevoArticulo(){
       if (error) {
         alert('Hay un error en sus datos verifique e intentelo de nuevo...')
       } else {
-        alert('Registro completado con exito!')
+        alert('Registro completado con exito!');
+        MostrarContenido();
       }
-    
   });
+
+  
 }
+
+function MostrarContenido(){
+//Programacion reactiava, mostrar contenido. solo agregar nuevo.
+/*   firebase.database().ref('Productos').on("child_added", ljkhjbvbkhyukhbj=>{
+  }) */
+  firebase.database().ref('Productos').once('value').then(function(snapshot){
+    snapshot.forEach(function(snapshot){
+      var data = snapshot.val();
+
+      var thumb = $('#foto-show').css('background-image', '../'+data.foto)
+      console.log(thumb);
+     $('#body-home').append('<div class="item-2">'+
+      '<a href="#" class="card">'+
+      '  <div class="thumb" id="foto-show" style="background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/210284/flex-1.jpg);"></div>'+
+      '  <article>'+
+      '    <h1>'+data.titulo+'</h1>'+
+      '     <p>'+data.descripcion+'</p>'+
+      '    <span>'+ data.categoria+'</span>'+
+      '  </article>'+
+      '</a>'+
+    '</div>');
+    });
+  });
+}MostrarContenido();
